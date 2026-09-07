@@ -1,6 +1,6 @@
 # Little Pumpkin Baby Shower — Krutarth & Raksha
 
-Static site, no build step. Live at `https://krutarth22.github.io/little-pumpkin-baby-shower/`.
+Static site, no build step. Live at `https://krutarth22.github.io/little-pumpkin/`.
 Cloud backend: Supabase (shared RSVPs + keepsake wall + photo storage).
 
 ## Run locally
