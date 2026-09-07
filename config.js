@@ -1,0 +1,3 @@
+// Public client configuration; database policies control access.
+const SUPABASE_URL = "https://xuspoyamjsggryhoiyim.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1c3BveWFtanNnZ3J5aG9peWltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NTU4MTIsImV4cCI6MjEwNDAzMTgxMn0.Tl70JJ7m7RRPIPq9z8loRMTQO6ETX82Vzxnd_fL0Fv0";

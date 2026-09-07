@@ -1,9 +1,7 @@
 // Config
 const AMAZON_REGISTRY_URL = "https://www.amazon.com/baby-reg/raksha-patel-january-2027-boonton/315JG9NQI33SR";
 const EVENT_DATE = new Date("2026-11-22T16:00:00-05:00");
-// Supabase (public anon key — safe in client code by design; RLS enforces access)
-const SUPABASE_URL = "https://xuspoyamjsggryhoiyim.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1c3BveWFtanNnZ3J5aG9peWltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NTU4MTIsImV4cCI6MjEwNDAzMTgxMn0.Tl70JJ7m7RRPIPq9z8loRMTQO6ETX82Vzxnd_fL0Fv0";
+// Shared public Supabase configuration is loaded by config.js.
 
 // Registry is link-only — Amazon is source of truth (no mirror grid).
 // See AMAZON_REGISTRY_URL above.
@@ -61,70 +59,39 @@ document.querySelectorAll("main .card").forEach(c=>c.classList.add("reveal"));
 const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.12});
 document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 
-// RSVP → Supabase (shared) + localStorage (fallback)
-const form = document.getElementById("rsvp-form");
-const done = document.getElementById("rsvp-done");
-form.addEventListener("submit", async e=>{
-  e.preventDefault();
-  const fd = new FormData(form);
-  if(!fd.get("attending")){ document.getElementById("rsvp-msg").textContent="Please choose Joyfully Accepts or Regretfully Declines."; return; }
-  const r = {
-    id: "r"+Date.now(), created_at: new Date().toISOString(),
-    name: (fd.get("name")||"").toString().slice(0,80),
-    contact: (fd.get("contact")||"").toString().slice(0,80),
-    attending: fd.get("attending")==="no" ? "no" : "yes",
-    adults: +fd.get("adults")||1, kids: +fd.get("kids")||0,
-    message: (fd.get("message")||"").toString().slice(0,300),
-  };
-  if(r.attending==="no"){ r.adults=0; r.kids=0; }
-  let cloudOk = false;
-  if(sb){
-    try{ const {error} = await sb.from("rsvps").insert(r); cloudOk = !error; if(error) console.warn("RSVP cloud save failed:", error.message); }
-    catch(err){ console.warn("RSVP cloud save failed:", err); }
-  }
-  const all = store.get("baby_rsvps",[]); all.push(r); store.set("baby_rsvps",all);
-  form.classList.add("hidden"); done.classList.remove("hidden");
-  boom({particleCount:140}); setTimeout(()=>boom({particleCount:60,origin:{y:.5}}),300);
-  document.getElementById("rsvp-summary").textContent = r.attending==="yes"
-    ? `${r.name} • Attending • ${r.adults} adult(s), ${r.kids} kid(s)`
-    : `${r.name} • Can't make it — you'll be missed!`;
-  document.getElementById("rsvp-msg").textContent = cloudOk ? "" : (sb ? "Saved on this device — cloud sync failed, tell the hosts!" : "");
-});
-document.getElementById("rsvp-edit").onclick=()=>{ form.classList.remove("hidden"); done.classList.add("hidden"); };
-// Declining hides the counts (no seats needed)
-form.querySelectorAll('input[name="attending"]').forEach(radio=>radio.addEventListener("change", ()=>{
-  form.classList.toggle("declining", form.querySelector('input[name="attending"]:checked').value==="no");
-}));
-// Steppers for adults/kids counts (dim at limits)
-function refreshSteppers(){
-  document.querySelectorAll("[data-step]").forEach(btn=>{
-    const input=form.querySelector(`input[name="${btn.dataset.for}"]`);
-    if(!input) return;
-    const v=+input.value||0, d=+btn.dataset.step;
-    btn.disabled = (d<0 && v<=(+input.min||0)) || (d>0 && v>=(+input.max||6));
-  });
-}
-document.querySelectorAll("[data-step]").forEach(btn=>btn.addEventListener("click", ()=>{
-  const input=form.querySelector(`input[name="${btn.dataset.for}"]`);
-  if(!input) return;
-  const min=+input.min||0, max=+input.max||6;
-  input.value=Math.min(max,Math.max(min,(+input.value||0)+(+btn.dataset.step)));
-  refreshSteppers();
-}));
-refreshSteppers();
-
 // Keepsake wall — note + optional photo. Cloud-first, local mirror fallback.
 function seedNotes(){
   return [{gname:"Dhruvi Masi & Lina Masi",gtext:"Can't wait to meet our little pumpkin girl! 🎀",src:null,at:new Date().toISOString()}];
 }
+let gbLoading = false;
+let gbVersion = 0;
+function showKeepsake(note){
+  const box = document.getElementById("gb-list");
+  const card = document.createElement("div");
+  card.className = "gb keep-card";
+  if(note.src){
+    const img = document.createElement("img");
+    img.src = note.src; img.alt = "Keepsake photo";
+    card.append(img);
+  }
+  const message = document.createElement("p");
+  message.textContent = note.gtext;
+  card.append(message);
+  box.replaceChildren(card);
+}
 async function renderGB(){
+  if(gbLoading) return;
+  gbLoading = true;
+  const version = gbVersion;
+  try{
   const box = document.getElementById("gb-list");
   let list = [];
   if(sb){
     try{
       const {data, error} = await sb.from("keepsake_notes").select("gname,gtext,photo_url,created_at").order("created_at",{ascending:false}).limit(60);
-      if(!error && data){ list = data.map(n=>({gname:n.gname,gtext:n.gtext,src:n.photo_url||null,at:n.created_at})); }
-    }catch(err){ console.warn("Keepsake fetch failed:", err); }
+      if(error) return;
+      if(data){ list = data.map(n=>({gname:n.gname,gtext:n.gtext,src:n.photo_url||null,at:n.created_at})); }
+    }catch(err){ console.warn("Keepsake fetch failed:", err); return; }
   }
   if(!list.length){
     // local mirror (migrates old split keys once) or seed
@@ -138,16 +105,24 @@ async function renderGB(){
     list = local.slice().reverse();
     if(!list.length) list = seedNotes();
   }
-  box.innerHTML="";
+  // A background read started before a new post must not replace that post.
+  if(version !== gbVersion) return;
   const latest = list[0];
-  if(!latest){ box.innerHTML = `<div class="gb">Be the first to leave a note 💕</div>`; return; }
-  const d=document.createElement("div"); d.className="gb keep-card";
-  d.innerHTML = `${latest.src?`<img src="${latest.src}" alt="Keepsake photo" loading="lazy" />`:""}<p>${escapeHtml(latest.gtext)}</p>`;
-  box.append(d);
+  if(latest) showKeepsake(latest);
+  } finally { gbLoading = false; }
 }
+
 function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 document.getElementById("gb-form").addEventListener("submit", async e=>{
   e.preventDefault();
+  const button = e.target.querySelector('button[type="submit"]');
+  if(button.disabled) return;
+  button.disabled = true;
+  const buttonText = button.textContent;
+  button.textContent = "Posting…";
+  const status = document.getElementById("gb-status");
+  status.textContent = "Posting your keepsake…";
+  try {
   const fd=new FormData(e.target);
   const file=fd.get("gphoto");
   const entry={gname:(fd.get("gname")||"Guest").toString().slice(0,40),gtext:(fd.get("gtext")||"").toString().slice(0,300),src:null,at:new Date().toISOString()};
@@ -164,15 +139,42 @@ document.getElementById("gb-form").addEventListener("submit", async e=>{
       }
       const {error}=await sb.from("keepsake_notes").insert({gname:entry.gname,gtext:entry.gtext,photo_url});
       if(error) throw error;
-      mirrorLocal(photo_url);
-    }catch(err){ console.warn("Keepsake cloud save failed:", err); mirrorLocal(null); alert("Saved on this device — cloud sync failed, tell the hosts!"); }
+      // Paint the confirmed post immediately; do not wait for another read.
+      gbVersion++;
+      showKeepsake({...entry,src:photo_url});
+      try { mirrorLocal(photo_url); } catch {}
+    }catch(err){
+      console.warn("Keepsake cloud save failed:", err);
+      status.textContent = "We couldn't confirm your post. Your message and photo are still here. Please try again.";
+      return;
+    }
   }else{
-    if(file && file.size){ const r=new FileReader(); r.onload=()=>{ mirrorLocal(r.result); e.target.reset(); renderGB(); }; r.readAsDataURL(file); boom({particleCount:40,spread:60}); return; }
-    mirrorLocal(null);
+    status.textContent = "We couldn't connect to the keepsake wall. Please refresh and try again. Your post hasn't been sent.";
+    return;
   }
-  e.target.reset(); renderGB(); boom({particleCount:40,spread:60});
+  e.target.reset();
+  status.textContent = "Your keepsake is posted!";
+  boom({particleCount:40,spread:60});
+  } finally {
+    button.disabled = false;
+    button.textContent = buttonText;
+  }
 });
 renderGB();
+// Keep other guests' posts fresh while the wall is being viewed.
+let keepsakeVisible = false;
+const keepsakeObserver = new IntersectionObserver(entries => {
+  keepsakeVisible = entries.some(entry => entry.isIntersecting);
+  if(keepsakeVisible && !document.hidden) renderGB();
+});
+keepsakeObserver.observe(document.getElementById("guestbook"));
+setInterval(() => {
+  if(keepsakeVisible && !document.hidden) renderGB();
+}, 5000);
+document.addEventListener("visibilitychange", () => {
+  if(!document.hidden) renderGB();
+});
+window.addEventListener("online", () => renderGB());
 
 // Lightbox — tap any keepsake photo to view full size
 const lb = document.getElementById("lightbox");

@@ -1,0 +1,23 @@
+const {readFileSync}=require('node:fs');
+const {join}=require('node:path');
+const vm=require('node:vm');
+const assert=require('node:assert/strict');
+const source=readFileSync(join(__dirname,'../app.js'),'utf8');
+const slice=source.slice(source.indexOf('function seedNotes'),source.indexOf('function escapeHtml'));
+const box={replaceChildren(card){this.card=card}};
+let resolveRead;
+const context={document:{getElementById:()=>box,createElement:()=>({children:[],append(child){this.children.push(child)}})},sb:{from:()=>({select:()=>({order:()=>({limit:()=>new Promise(resolve=>resolveRead=resolve)})})})},store:{get:()=>[],set(){}},console};
+vm.createContext(context);vm.runInContext(slice,context);
+(async()=>{
+ const read=vm.runInContext('renderGB()',context);
+ vm.runInContext('gbVersion++; showKeepsake({gtext:"Just posted",src:"photo.jpg"})',context);
+ assert.equal(box.card.children[1].textContent,'Just posted');
+ resolveRead({data:[{gtext:'Old post',photo_url:null}],error:null});await read;
+ assert.equal(box.card.children[1].textContent,'Just posted');
+ const refresh=vm.runInContext('renderGB()',context);
+ resolveRead({data:[{gtext:'Another guest just posted',photo_url:null}],error:null});await refresh;
+ assert.equal(box.card.children[0].textContent,'Another guest just posted');
+ const failed=vm.runInContext('renderGB()',context);resolveRead({error:Error('offline')});await failed;
+ assert.equal(box.card.children[0].textContent,'Another guest just posted');
+ console.log('Passed: immediate display, stale response protection, refreshed post, preserve wall on read failure.');
+})().catch(error=>{console.error(error);process.exit(1)});

@@ -223,3 +223,25 @@ footer{text-align:center;color:var(--muted);padding:24px 12px 40px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:760px){.admin-main{padding:28px 14px 48px}.admin-header{padding:0 16px}.admin-stat-grid{grid-template-columns:1fr 1fr}.admin-list-card{padding:18px 14px}.admin-list-heading,.admin-filters{flex-direction:column}.admin-search{max-width:none;width:100%}.filter-tabs{width:100%}.filter-tab{flex:1}.admin-actions{width:100%}.admin-actions .btn{flex:1}.admin-intro{margin-bottom:20px}}
 @media(max-width:480px){.admin-header{height:60px}.admin-site-link{font-size:.8rem}.admin-main{padding-top:22px}.admin-intro h1{font-size:2.7rem}.admin-login-card{padding:20px 16px;grid-template-columns:1fr}.admin-login-icon{grid-row:auto}.admin-login-form{flex-direction:column}.admin-login-form .btn{width:100%}.admin-stat-grid{gap:8px}.admin-stat{padding:14px 10px;gap:0 8px}.admin-stat .stat-icon{width:36px;height:36px}.admin-stat strong{font-size:1.45rem}.rsvp-card-top{align-items:flex-start}.admin-rsvp-card{padding:14px}.admin-session-bar{align-items:flex-start;gap:10px}.admin-session-bar p{overflow-wrap:anywhere}}
+
+/* Clear invitation navigation and RSVP feedback. */
+.cta-row{flex-wrap:wrap}
+.scroll-cue{display:block;flex-basis:100%;margin-top:10px;color:var(--brown);font-weight:700;text-underline-offset:4px}
+.scroll-cue span{display:inline-block;margin-left:5px;font-size:1.25em}
+main section[id]{scroll-margin-top:100px}
+#rsvp-msg:not(:empty){padding:12px;border:1px solid #d5ac80;border-radius:10px;background:#fff8ee;color:var(--ink)}
+#rsvp-form button:disabled{cursor:wait;opacity:.65}
+#rsvp-form .step-ctrl button:disabled{cursor:default}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Keep the invitation journey visible, including on small screens. */
+.section-next{display:block;margin-top:22px;padding:14px 0 2px;border-top:1px solid #e9c9a3;color:var(--brown);font-weight:800;text-underline-offset:4px}
+.registry-panel{border:2px solid #d68c52;background:#fff8ee}
+.links a[href="#registry"]{color:var(--orange-d)}
+@media(max-width:700px){
+  .nav-inner{flex-wrap:wrap;justify-content:space-between;gap:4px 8px;padding:8px 10px 0}
+  .nav-inner>.btn{margin-left:auto}
+  .nav .links{display:flex;order:3;flex:1 0 100%;justify-content:space-between;gap:0;margin:0;flex-wrap:wrap}
+  .nav .links a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 4px;font-size:.875rem}
+  main section[id]{scroll-margin-top:130px}
+}

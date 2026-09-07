@@ -16,12 +16,12 @@
 <header class="nav">
     <div class="nav-inner">
     <a class="brand" href="#top"><svg class="mini-pumpkin" viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="18" rx="11" ry="9" fill="#E5A88F"/><ellipse cx="11" cy="18" rx="4.5" ry="8" fill="#f2c6b3"/><ellipse cx="21" cy="18" rx="4.5" ry="8" fill="#c98a71"/><rect x="14.6" y="6" width="2.8" height="6" rx="1.4" fill="#9aa07a"/></svg> <span>Little Pumpkin</span></a>
-    <nav class="links">
+    <nav class="links" aria-label="Celebration sections">
       <a href="#details">Details</a>
       <a href="#rsvp">RSVP</a>
       <a href="#registry">Registry</a>
-      <a href="#guestbook">Keepsake</a>
-      <a href="#faq">FAQ</a>
+      <a href="#guestbook">Wishes</a>
+      <a href="#faq">FAQs</a>
     </nav>
     <a class="btn btn-small" href="#rsvp">RSVP by 11/1</a>
   </div>
@@ -64,6 +64,8 @@
   </div>
   <div class="cta-row">
     <a class="btn" href="#rsvp">RSVP Now</a>
+    <a class="btn btn-ghost" href="#registry">View Baby Registry 🎁</a>
+    <a class="scroll-cue" href="#details">Scroll for details <span aria-hidden="true">↓</span></a>
   </div>
   <div class="realistic-patch" aria-hidden="true">
     <img src="assets/hero-bottom-pumpkins-florals.webp" alt="" />
@@ -100,7 +102,7 @@
       <h3><svg class="h-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#8a9a5b" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="16" stroke="#8a9a5b" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="8" r="1.4" fill="#8a9a5b"/></svg> Good to know</h3>
       <ul class="info-list">
         <li><b>Parking</b> — free lot on site</li>
-        <li><b>Dress</b> — Fall Festive!</li>
+        <li><b>Dress</b> — American Fall Festive</li>
       </ul>
     </div>
     <div>
@@ -109,6 +111,7 @@
       </div>
     </div>
   </div>
+  <a class="section-next" href="#rsvp">Let us know if you’re coming <span aria-hidden="true">→</span></a>
 </section>
 
 <section id="rsvp" class="card accent rsvp-featured">
@@ -118,6 +121,7 @@
   <h2>RSVP</h2>
   <p>One RSVP per family, please.</p>
   <form id="rsvp-form">
+    <noscript><p>Please enable JavaScript to send your RSVP, or email <a href="mailto:raksha0912@gmail.com">Raksha</a>.</p></noscript>
     <div class="grid2">
       <label>Full name *<input required name="name" placeholder="e.g. Krutarth Majithia" /></label>
       <label>Email or phone *<input required name="contact" placeholder="you@email.com / 555-..." /></label>
@@ -132,21 +136,25 @@
     </div>
     <label>Message for the parents<textarea name="message" rows="3" placeholder="We can't wait to celebrate!"></textarea></label>
     <button class="btn" type="submit">Send Our RSVP 💌</button>
-    <p class="muted" id="rsvp-msg" aria-live="polite"></p>
+    <p class="muted" id="rsvp-msg" role="status" aria-live="polite" tabindex="-1"></p>
   </form>
-  <div id="rsvp-done" class="hidden rsvp-success">
+  <div id="rsvp-done" class="hidden rsvp-success" tabindex="-1">
     <div class="success-check" aria-hidden="true">🎃✓</div>
-    <h3>Thank you! You're on the list.</h3>
+    <h3>Thank you! Your RSVP has been received.</h3>
     <p id="rsvp-summary" aria-live="polite"></p>
-    <button class="btn btn-ghost" id="rsvp-edit">Edit / Add another</button>
+    <p><a class="btn" href="#registry">Explore Our Baby Registry 🎁</a></p>
+    <button class="btn btn-ghost btn-small" id="rsvp-edit">RSVP for another family</button>
   </div>
+  <a class="section-next" href="#registry">Explore the baby registry <span aria-hidden="true">→</span></a>
 </section>
 
 <section id="registry" class="card registry-panel">
   <svg class="gift-art" viewBox="0 0 64 64" aria-hidden="true"><rect x="12" y="28" width="40" height="28" rx="6" fill="#E5A88F"/><rect x="28" y="28" width="8" height="28" fill="#C68A70"/><rect x="8" y="20" width="48" height="10" rx="5" fill="#C68A70"/><path d="M32 20 C24 20 18 16 20 10 C21 6 27 7 32 20 C37 7 43 6 44 10 C46 16 40 20 32 20 Z" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-linecap="round"/></svg>
   <h2>Registry</h2>
-  <p>We're registered on Amazon for our baby girl — buying via the Registry page marks gifts purchased for everyone.</p>
-  <p><a id="amazon-full" class="btn" href="#" target="_blank" rel="noopener">View Registry <span aria-hidden="true">↗</span></a></p>
+  <p>Help us get ready for our little pumpkin—explore our baby registry.</p>
+  <p><a id="amazon-full" class="btn" href="https://www.amazon.com/baby-reg/raksha-patel-january-2027-boonton/315JG9NQI33SR" target="_blank" rel="noopener">View Our Amazon Registry <span aria-hidden="true">↗</span></a></p>
+  <p class="muted">Choose gifts through Amazon so purchased items are marked on the registry.</p>
+  <a class="section-next" href="#books">A little request: books for baby <span aria-hidden="true">→</span></a>
 </section>
 
 <section id="books" class="card books-card reveal">
@@ -158,10 +166,11 @@
       <p class="muted">New or well-loved — just sign the inside with your message. It builds her first library.</p>
     </div>
   </div>
+  <a class="section-next" href="#guestbook">Leave a wish for our little pumpkin <span aria-hidden="true">→</span></a>
 </section>
 
 <section id="guestbook" class="card accent-pink">
-  <h2>Guestbook — For Baby Girl 💕</h2>
+  <h2>Wishes for Baby Girl 💕</h2>
   <p>Leave a note for Krutarth, Raksha & baby girl — with an optional photo she'll see when she's older. We'll save them all as a keepsake.</p>
   <form id="gb-form">
     <div class="grid2">
@@ -170,8 +179,10 @@
     </div>
     <label>Your wish *<textarea name="gtext" rows="2" required placeholder="We can't wait to meet you..."></textarea></label>
     <button class="btn btn-small" type="submit">Post to Keepsake</button>
+    <p id="gb-status" role="status" aria-live="polite"></p>
   </form>
   <div id="gb-list" class="keepsake-grid"></div>
+  <a class="section-next" href="#faq">Have questions? Read the FAQs <span aria-hidden="true">→</span></a>
 </section>
 
 <section id="faq" class="card">
@@ -194,7 +205,9 @@
   <img id="lightbox-img" alt="Expanded shower photo" />
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+<script src="config.js"></script>
+<script src="rsvp.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>
