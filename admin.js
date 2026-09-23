@@ -1,6 +1,7 @@
 // Host-only page. Data access is protected by Supabase Row Level Security.
 const SUPABASE_URL = "https://xuspoyamjsggryhoiyim.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1c3BveWFtanNnZ3J5aG9peWltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NTU4MTIsImV4cCI6MjEwNDAzMTgxMn0.Tl70JJ7m7RRPIPq9z8loRMTQO6ETX82Vzxnd_fL0Fv0";
+const ADMIN_EMAILS = new Set(["raksha0912@gmail.com", "krutarthmajithia22@gmail.com"]);
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const els = {
@@ -133,8 +134,9 @@ async function refreshAdmin(){
 }
 
 els.login.addEventListener("click", async ()=>{
-  const email = els.email.value.trim();
+  const email = els.email.value.trim().toLowerCase();
   if(!email || !els.email.validity.valid){ setStatus("Enter a valid email address first.", "is-error"); els.email.focus(); return; }
+  if(!ADMIN_EMAILS.has(email)){ setStatus("This email is not authorized for the host dashboard.", "is-error"); els.email.focus(); return; }
   setBusy(els.login, true, "Sending…");
   const {error} = await sb.auth.signInWithOtp({email, options:{emailRedirectTo:new URL("admin.html", location.href).href}});
   setBusy(els.login, false, "Sending…");
