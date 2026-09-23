@@ -234,6 +234,15 @@ main section[id]{scroll-margin-top:100px}
 #rsvp-form .step-ctrl button:disabled{cursor:default}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+/* Simplified invitation shared with ?invite=simple. */
+.simple-rsvp-copy{display:none}
+.simple-invite .simple-rsvp-copy{display:block}
+.simple-invite .standard-rsvp-copy,
+.simple-invite .counts,
+.simple-invite #faq,
+.simple-invite .faq-next,
+.simple-invite .links a[href="#faq"]{display:none!important}
+
 /* Keep the invitation journey visible, including on small screens. */
 .section-next{display:block;margin-top:22px;padding:14px 0 2px;border-top:1px solid #e9c9a3;color:var(--brown);font-weight:800;text-underline-offset:4px}
 .registry-panel{border:2px solid #d68c52;background:#fff8ee}

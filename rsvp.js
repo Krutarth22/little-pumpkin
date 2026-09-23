@@ -3,6 +3,7 @@
 const form = document.getElementById("rsvp-form");
 const done = document.getElementById("rsvp-done");
 const msg = document.getElementById("rsvp-msg");
+const simpleInvite = document.documentElement.classList.contains("simple-invite");
 const submit = form.querySelector('button[type="submit"]');
 const label = submit.textContent;
 let sending = false;
@@ -68,7 +69,7 @@ form.addEventListener("submit", async e => {
     form.classList.add("hidden");
     done.classList.remove("hidden");
     document.getElementById("rsvp-summary").textContent = row.attending === "yes"
-      ? `${row.name} • Attending • ${row.adults} adult(s), ${row.kids} kid(s)`
+      ? (simpleInvite ? `${row.name} • Attending` : `${row.name} • Attending • ${row.adults} adult(s), ${row.kids} kid(s)`)
       : `${row.name} • Can't make it — you'll be missed!`;
     done.focus();
     if (typeof boom === "function") boom({particleCount:140});

@@ -3,6 +3,10 @@
 Static site, no build step. Live at `https://krutarth22.github.io/little-pumpkin/`.
 Cloud backend: Supabase (shared RSVPs + keepsake wall + photo storage).
 
+## Invitation links
+- Standard invitation: `https://krutarth22.github.io/little-pumpkin/`
+- Simplified invitation (no party-size selector or FAQ): `https://krutarth22.github.io/little-pumpkin/?invite=simple`
+
 ## Run locally
 ```
 cd "/Users/krutarthmajithia/Documents/ChatGPT/Resume Skills/little-pumpkin-baby-shower"
